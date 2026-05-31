@@ -4,21 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบช่วยเขียนข่าวประชาสัมพันธ์ โรงเรียนวัดแม่กะ</title>
-    
-    <!-- Google Fonts: Sarabun -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- SweetAlert2 for nice popups -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <!-- FontAwesome -->
+    <!-- Google Fonts: Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <script>
         tailwind.config = {
             theme: {
@@ -27,10 +19,12 @@
                         sans: ['Sarabun', 'sans-serif'],
                     },
                     colors: {
-                        prRed: '#C8102E',
-                        prYellow: '#F1C400',
-                        prDarkRed: '#9B0C23',
-                        prLightYellow: '#FFF5CC'
+                        brand: {
+                            red: '#D32F2F',
+                            redlight: '#FFEBEE',
+                            yellow: '#FFC107',
+                            yellowlight: '#FFF8E1'
+                        }
                     }
                 }
             }
@@ -38,706 +32,426 @@
     </script>
     <style>
         body { font-family: 'Sarabun', sans-serif; background-color: #f9fafb; }
-        .tab-active { border-bottom-width: 4px; border-color: #F1C400; color: #F1C400; font-weight: 600; }
-        .tab-inactive { color: #fca5a5; }
-        .tab-inactive:hover { color: white; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #C8102E; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #9B0C23; }
-
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #C8102E;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
+        .tab-active { border-bottom: 4px solid #D32F2F; color: #D32F2F; font-weight: 700; }
+        .tab-inactive { color: #6b7280; font-weight: 500; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #D32F2F; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Custom Checkbox styles for brand colors */
+        input[type="checkbox"] { accent-color: #D32F2F; width: 1.25rem; height: 1.25rem; cursor: pointer; }
     </style>
 </head>
-<body class="text-gray-800 antialiased flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen text-gray-800">
 
     <!-- Header -->
-    <header class="bg-prRed shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <div class="flex items-center space-x-4">
-                    <img src="https://img2.pic.in.th/logob0b7643db577ceee.png" alt="Logo" class="h-14 w-auto bg-white rounded-full p-1 shadow-sm">
-                    <div>
-                        <h1 class="text-white text-xl sm:text-2xl font-bold leading-tight">ระบบช่วยเขียนข่าวประชาสัมพันธ์</h1>
-                        <p class="text-prYellow text-sm sm:text-base font-medium">โรงเรียนวัดแม่กะ</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Tabs Navigation -->
-            <div class="flex space-x-1 mt-2">
-                <button onclick="switchTab('create')" id="btn-tab-create" class="px-4 py-3 text-sm sm:text-base tab-active transition-colors flex items-center gap-2">
-                    <i class="fas fa-pen-nib"></i> ระบบเขียนข่าว
-                </button>
-                <button onclick="switchTab('history')" id="btn-tab-history" class="px-4 py-3 text-sm sm:text-base tab-inactive transition-colors flex items-center gap-2">
-                    <i class="fas fa-history"></i> ประวัติการเขียนข่าว
-                </button>
+    <header class="bg-brand-red text-white shadow-md">
+        <div class="max-w-5xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center gap-4">
+            <img src="https://img2.pic.in.th/logob0b7643db577ceee.png" alt="Logo" class="h-20 w-auto bg-white rounded-full p-1 shadow">
+            <div class="text-center sm:text-left">
+                <h1 class="text-2xl sm:text-3xl font-bold text-brand-yellow drop-shadow-md">ระบบช่วยเขียนข่าวประชาสัมพันธ์</h1>
+                <p class="text-lg mt-1 text-red-100">โรงเรียนวัดแม่กะ</p>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-6">
         
-        <!-- API Key Settings Panel -->
-        <div class="mb-6 bg-white rounded-xl shadow-sm border border-red-100 p-4 flex flex-col md:flex-row items-start md:items-center gap-4">
-            <div class="flex items-center gap-2 text-prDarkRed whitespace-nowrap">
-                <i class="fas fa-key"></i>
-                <span class="font-bold text-sm">การตั้งค่า AI</span>
-            </div>
-            <div class="flex-grow flex items-center gap-2 w-full">
-                <input type="password" id="apiKeyInput" placeholder="วาง Gemini API Key ที่นี่ (ขึ้นต้นด้วย AIza...)" class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-prRed outline-none transition-colors">
-                <button type="button" onclick="toggleApiKeyVisibility()" class="text-gray-500 hover:text-gray-700 px-2" title="แสดง/ซ่อน API Key">
-                    <i class="fas fa-eye" id="eyeIcon"></i>
-                </button>
-                <button onclick="saveApiKey()" class="whitespace-nowrap bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition shadow-sm">
-                    บันทึก
-                </button>
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-300 mb-6 bg-white rounded-t-lg shadow-sm px-2 pt-2">
+            <button onclick="switchTab('write')" id="tab-write" class="tab-active px-6 py-3 text-lg transition-colors duration-200 hover:bg-gray-50 rounded-t-lg flex items-center gap-2">
+                <i class="fa-solid fa-pen-nib"></i> ระบบเขียนข่าว
+            </button>
+            <button onclick="switchTab('history'); loadHistory();" id="tab-history" class="tab-inactive px-6 py-3 text-lg transition-colors duration-200 hover:bg-gray-50 rounded-t-lg flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left"></i> ประวัติการเขียนข่าว
+            </button>
+        </div>
+
+        <!-- Tab 1: เขียนข่าว -->
+        <div id="content-write" class="bg-white p-6 rounded-b-lg rounded-tr-lg shadow-md border-t-4 border-brand-yellow">
+            <form id="newsForm" onsubmit="event.preventDefault(); processForm();">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- วันที่เริ่ม -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2"><i class="fa-regular fa-calendar-plus text-brand-red mr-2"></i>1. วันที่เริ่มกิจกรรม</label>
+                        <input type="date" id="startDate" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent">
+                    </div>
+                    <!-- วันที่สิ้นสุด -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2"><i class="fa-regular fa-calendar-check text-brand-red mr-2"></i>2. วันที่สิ้นสุดกิจกรรม</label>
+                        <input type="date" id="endDate" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent">
+                    </div>
+                </div>
+
+                <!-- ผู้เข้าร่วม -->
+                <div class="mt-6">
+                    <label class="block text-gray-700 font-bold mb-3"><i class="fa-solid fa-users text-brand-red mr-2"></i>3. ผู้เข้าร่วม (เลือกได้มากกว่า 1)</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-brand-yellowlight p-4 rounded-md border border-yellow-200">
+                        <label class="flex items-start gap-2"><input type="checkbox" name="participant" value="นางสาวศิริยา อินทกาโมทย์ ผู้อำนวยการโรงเรียนวัดแม่กะ"> <span class="text-sm">นางสาวศิริยา อินทกาโมทย์<br><span class="text-xs text-gray-500">ผู้อำนวยการโรงเรียนวัดแม่กะ</span></span></label>
+                        <label class="flex items-start gap-2"><input type="checkbox" name="participant" value="นางสาวศิริยา อินทกาโมทย์ ผู้อำนวยการโรงเรียนวัดแม่กะ มอบหมายให้"> <span class="text-sm">ผอ.ศิริยา อินทกาโมทย์ มอบหมายให้...</span></label>
+                        <label class="flex items-start gap-2"><input type="checkbox" name="participant" value="นายจักรพงศ์ จันทวงศ์ รองผู้อำนวยการโรงเรียนวัดแม่กะ"> <span class="text-sm">นายจักรพงศ์ จันทวงศ์<br><span class="text-xs text-gray-500">รองผู้อำนวยการโรงเรียนวัดแม่กะ</span></span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นางสาวศศิประภา ชมถิ่น"> <span class="text-sm">นางสาวศศิประภา ชมถิ่น</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นางณพิชญา นิติคุณชัย"> <span class="text-sm">นางณพิชญา นิติคุณชัย</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นางสาวศิริณทิพย์ สุวรรณ์"> <span class="text-sm">นางสาวศิริณทิพย์ สุวรรณ์</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นางสาวจันทวี ทาเกิด"> <span class="text-sm">นางสาวจันทวี ทาเกิด</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นายณัฐพงษ์ วิริยา"> <span class="text-sm">นายณัฐพงษ์ วิริยา</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นายธนะกานต์ ภูมิมาลา"> <span class="text-sm">นายธนะกานต์ ภูมิมาลา</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นางสาวนฤมล กระจ่างโฉม"> <span class="text-sm">นางสาวนฤมล กระจ่างโฉม</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นางสาวเยาวพา มาน้อย"> <span class="text-sm">นางสาวเยาวพา มาน้อย</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นายพิสิษฐ์ ตั้งสกุล"> <span class="text-sm">นายพิสิษฐ์ ตั้งสกุล</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นายธนดล แดนคีรีราษฎ์"> <span class="text-sm">นายธนดล แดนคีรีราษฎ์</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="นายสุรชัย ปองพรศักดิ์"> <span class="text-sm">นายสุรชัย ปองพรศักดิ์</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="คณะครูโรงเรียนวัดแม่กะ"> <span class="text-sm">คณะครูโรงเรียนวัดแม่กะ</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="participant" value="คณะครูและนักเรียนโรงเรียนวัดแม่กะ"> <span class="text-sm font-semibold">คณะครูและนักเรียนโรงเรียนวัดแม่กะ</span></label>
+                        
+                        <div class="flex items-center gap-2 col-span-1 sm:col-span-2 lg:col-span-3 mt-2 border-t border-yellow-300 pt-3">
+                            <input type="checkbox" id="checkOtherParticipant" onchange="toggleInput('checkOtherParticipant', 'otherParticipantText')"> 
+                            <span class="text-sm font-bold">อื่นๆ:</span>
+                            <input type="text" id="otherParticipantText" disabled placeholder="ระบุผู้เข้าร่วมอื่นๆ" class="flex-grow px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-red disabled:bg-gray-100 disabled:cursor-not-allowed text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ทำอะไร -->
+                <div class="mt-6">
+                    <label class="block text-gray-700 font-bold mb-2"><i class="fa-solid fa-person-running text-brand-red mr-2"></i>4. ทำอะไร (กิจกรรมที่ดำเนินการ)</label>
+                    <textarea id="actionText" rows="3" required placeholder="อธิบายกิจกรรมที่ทำ เช่น เข้าร่วมการประชุมวิชาการ, จัดกิจกรรมวันแม่แห่งชาติ..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent"></textarea>
+                </div>
+
+                <!-- สถานที่ -->
+                <div class="mt-6">
+                    <label class="block text-gray-700 font-bold mb-2"><i class="fa-solid fa-location-dot text-brand-red mr-2"></i>5. สถานที่</label>
+                    <div class="space-y-3 bg-brand-redlight p-4 rounded-md border border-red-200">
+                        <label class="flex items-center gap-2"><input type="checkbox" name="location" value="โรงเรียนวัดแม่กะ"> โรงเรียนวัดแม่กะ</label>
+                        <label class="flex items-center gap-2"><input type="checkbox" name="location" value="สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเชียงใหม่ เขต 2"> สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเชียงใหม่ เขต 2</label>
+                        
+                        <div class="flex items-center gap-2 mt-2">
+                            <input type="checkbox" id="checkOtherLocation" onchange="toggleInput('checkOtherLocation', 'otherLocationText')">
+                            <span class="font-bold">อื่นๆ:</span>
+                            <input type="text" id="otherLocationText" disabled placeholder="ระบุสถานที่อื่นๆ" class="flex-grow px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-red disabled:bg-gray-100 disabled:cursor-not-allowed">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ปุ่มประมวลผล -->
+                <div class="mt-8 flex gap-4">
+                    <button type="submit" id="btnProcess" class="flex-1 bg-brand-red hover:bg-red-700 text-white font-bold py-3 px-4 rounded-md shadow transition duration-200 flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> 6. ประมวลผลและสร้าง Prompt
+                    </button>
+                    <button type="button" onclick="clearForm()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-md shadow transition duration-200 flex items-center gap-2">
+                        <i class="fa-solid fa-eraser"></i> ล้างค่า
+                    </button>
+                </div>
+                <div id="statusMessage" class="mt-4 text-center font-bold hidden"></div>
+            </form>
+
+            <!-- Result Box -->
+            <div id="resultBox" class="mt-8 hidden border-2 border-brand-yellow rounded-lg overflow-hidden shadow-lg">
+                <div class="bg-brand-yellow text-yellow-900 font-bold px-4 py-3 flex justify-between items-center">
+                    <span><i class="fa-solid fa-robot mr-2"></i> ข้อความ Prompt สำหรับ Gemini</span>
+                    <button onclick="copyPrompt()" class="bg-white hover:bg-gray-100 text-brand-red font-bold py-1 px-3 rounded text-sm shadow flex items-center gap-1 transition-colors">
+                        <i class="fa-regular fa-copy"></i> คัดลอก
+                    </button>
+                </div>
+                <div class="p-4 bg-yellow-50">
+                    <textarea id="generatedPrompt" readonly rows="15" class="w-full w-full px-4 py-3 border border-yellow-300 rounded-md bg-white focus:outline-none text-gray-800 text-sm leading-relaxed resize-none"></textarea>
+                    <p class="text-xs text-red-600 mt-2 font-bold"><i class="fa-solid fa-circle-info"></i> กดปุ่ม "คัดลอก" ด้านบน แล้วนำไปวางในช่อง Chat ของ Gemini (หรือ ChatGPT) ได้เลย</p>
+                </div>
             </div>
         </div>
 
-        <!-- ================= TAB 1: CREATE NEWS ================= -->
-        <section id="tab-create" class="block">
-            <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-                <div class="bg-prLightYellow px-6 py-4 border-b border-yellow-200">
-                    <h2 class="text-lg font-bold text-prDarkRed flex items-center gap-2">
-                        <i class="fas fa-edit"></i> ข้อมูลกิจกรรม
-                    </h2>
-                </div>
-                
-                <form id="newsForm" class="p-6 space-y-6">
-                    <!-- Dates -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">1. วันที่เริ่มกิจกรรม <span class="text-red-500">*</span></label>
-                            <input type="date" id="startDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-prRed focus:border-prRed outline-none transition-colors">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">2. วันที่สิ้นสุดกิจกรรม <span class="text-red-500">*</span></label>
-                            <input type="date" id="endDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-prRed focus:border-prRed outline-none transition-colors">
-                        </div>
-                    </div>
-
-                    <!-- Participants -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">3. ผู้เข้าร่วม (เลือกได้มากกว่า 1) <span class="text-red-500">*</span></label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="participantsContainer">
-                            <!-- Injected via JS -->
-                        </div>
-                        <div class="mt-3 flex items-start gap-3">
-                            <input type="checkbox" id="pt_other_check" value="อื่นๆ" class="mt-1.5 w-4 h-4 text-prRed rounded focus:ring-prRed" onchange="toggleOtherInput('pt_other_check', 'pt_other_text')">
-                            <div class="flex-grow">
-                                <label for="pt_other_check" class="text-sm text-gray-700 font-medium">อื่นๆ (โปรดระบุ)</label>
-                                <input type="text" id="pt_other_text" disabled placeholder="ระบุผู้เข้าร่วมอื่นๆ" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-prRed bg-gray-50 disabled:opacity-50 outline-none transition-colors text-sm">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Activity -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">4. ทำอะไร (รายละเอียดกิจกรรม) <span class="text-red-500">*</span></label>
-                        <textarea id="activity" required rows="3" placeholder="อธิบายว่ากิจกรรมนี้ทำอะไรบ้าง..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-prRed focus:border-prRed outline-none transition-colors resize-none"></textarea>
-                    </div>
-
-                    <!-- Location -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">5. สถานที่ <span class="text-red-500">*</span></label>
-                        <div class="space-y-3">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" name="location" value="โรงเรียนวัดแม่กะ" class="w-4 h-4 text-prRed rounded focus:ring-prRed loc-checkbox">
-                                <span class="text-sm text-gray-700">โรงเรียนวัดแม่กะ</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" name="location" value="สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเชียงใหม่ เขต 2" class="w-4 h-4 text-prRed rounded focus:ring-prRed loc-checkbox">
-                                <span class="text-sm text-gray-700">สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเชียงใหม่ เขต 2</span>
-                            </label>
-                            <div class="flex items-start gap-3">
-                                <input type="checkbox" id="loc_other_check" value="อื่นๆ" class="mt-1.5 w-4 h-4 text-prRed rounded focus:ring-prRed loc-checkbox" onchange="toggleOtherInput('loc_other_check', 'loc_other_text')">
-                                <div class="flex-grow max-w-md">
-                                    <label for="loc_other_check" class="text-sm text-gray-700 font-medium">อื่นๆ (โปรดระบุ)</label>
-                                    <input type="text" id="loc_other_text" disabled placeholder="ระบุสถานที่อื่นๆ" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-prRed bg-gray-50 disabled:opacity-50 outline-none transition-colors text-sm">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="pt-4 border-t border-gray-200 flex flex-col sm:flex-row gap-4 justify-end">
-                        <button type="button" onclick="clearForm()" class="px-6 py-2.5 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2">
-                            <i class="fas fa-eraser"></i> ล้างค่า
-                        </button>
-                        <button type="submit" id="btnProcess" class="px-8 py-2.5 bg-prRed text-white font-bold rounded-lg hover:bg-prDarkRed shadow-md transition-colors flex items-center justify-center gap-2">
-                            <i class="fas fa-magic"></i> ประมวลผลด้วย AI
-                        </button>
-                    </div>
-                </form>
+        <!-- Tab 2: ประวัติ -->
+        <div id="content-history" class="bg-white p-6 rounded-b-lg rounded-tr-lg shadow-md border-t-4 border-brand-red hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-list-ol text-brand-red mr-2"></i>ประวัติการสร้าง Prompt ล่าสุด</h2>
+                <button onclick="loadHistory()" class="text-brand-red hover:text-red-800 bg-red-50 px-3 py-1 rounded text-sm transition-colors border border-red-200">
+                    <i class="fa-solid fa-rotate-right"></i> รีเฟรช
+                </button>
+            </div>
+            
+            <div id="historyLoader" class="text-center py-10 hidden">
+                <div class="loader"></div>
+                <p class="mt-3 text-gray-600 font-medium">กำลังโหลดข้อมูลประวัติ...</p>
             </div>
 
-            <!-- Loading State -->
-            <div id="loadingState" class="hidden mt-8 text-center p-8 bg-white rounded-xl shadow-md border border-gray-100">
-                <div class="loader mb-4"></div>
-                <h3 class="text-lg font-bold text-prRed">AI กำลังประมวลผลข่าว...</h3>
-                <p class="text-sm text-gray-500 mt-2">กรุณารอสักครู่ ระบบกำลังคิดพาดหัวและเนื้อข่าวที่เหมาะสม</p>
+            <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left font-bold text-gray-700 uppercase tracking-wider w-1/4">วันที่บันทึก</th>
+                            <th scope="col" class="px-6 py-3 text-left font-bold text-gray-700 uppercase tracking-wider">Prompt ที่สร้าง</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Data will be inserted here -->
+                        <tr><td colspan="2" class="px-6 py-8 text-center text-gray-500">กรุณากดปุ่มรีเฟรชเพื่อโหลดข้อมูล</td></tr>
+                    </tbody>
+                </table>
             </div>
-
-            <!-- Result Section -->
-            <div id="resultSection" class="hidden mt-8 space-y-6">
-                <div class="flex items-center gap-3 mb-2">
-                    <h2 class="text-2xl font-bold text-gray-800">ผลลัพธ์การประมวลผล</h2>
-                    <span class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1 rounded-full border border-green-200">
-                        <i class="fas fa-check-circle mr-1"></i> บันทึกลงระบบแล้ว
-                    </span>
-                </div>
-
-                <!-- Headlines -->
-                <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-                    <div class="bg-blue-50 px-6 py-3 border-b border-blue-100 flex justify-between items-center">
-                        <h3 class="font-bold text-blue-800"><i class="fas fa-heading mr-2"></i>พาดหัวข่าว (เลือก 1 หัวข้อ)</h3>
-                    </div>
-                    <div class="p-4">
-                        <ul id="resHeadlines" class="space-y-3">
-                            <!-- Injected -->
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- PR Text -->
-                <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-                    <div class="bg-purple-50 px-6 py-3 border-b border-purple-100 flex justify-between items-center">
-                        <h3 class="font-bold text-purple-800"><i class="fas fa-image mr-2"></i>เนื้อข่าวสำหรับลงภาพประชาสัมพันธ์</h3>
-                        <button onclick="copyText('resPrText')" class="text-sm bg-white border border-purple-200 hover:bg-purple-100 text-purple-700 px-3 py-1.5 rounded shadow-sm transition-colors flex items-center gap-1">
-                            <i class="far fa-copy"></i> คัดลอก
-                        </button>
-                    </div>
-                    <div class="p-6">
-                        <p id="resPrText" class="text-gray-800 leading-relaxed whitespace-pre-wrap"></p>
-                    </div>
-                </div>
-
-                <!-- FB Text -->
-                <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-                    <div class="bg-blue-50 px-6 py-3 border-b border-blue-100 flex justify-between items-center">
-                        <h3 class="font-bold text-blue-800"><i class="fab fa-facebook mr-2"></i>แคปชั่นสำหรับลง Facebook</h3>
-                        <button onclick="copyText('resFbText')" class="text-sm bg-white border border-blue-200 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded shadow-sm transition-colors flex items-center gap-1">
-                            <i class="far fa-copy"></i> คัดลอก
-                        </button>
-                    </div>
-                    <div class="p-6">
-                        <p id="resFbText" class="text-gray-800 leading-relaxed whitespace-pre-wrap"></p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= TAB 2: HISTORY ================= -->
-        <section id="tab-history" class="hidden">
-            <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col h-[80vh]">
-                <div class="bg-prLightYellow px-6 py-4 border-b border-yellow-200 flex justify-between items-center">
-                    <h2 class="text-lg font-bold text-prDarkRed flex items-center gap-2">
-                        <i class="fas fa-list-alt"></i> ประวัติการสร้างข่าวล่าสุด
-                    </h2>
-                    <button onclick="fetchHistory()" class="text-sm bg-white border border-yellow-300 hover:bg-yellow-50 text-prDarkRed px-3 py-1.5 rounded shadow-sm transition-colors flex items-center gap-1">
-                        <i class="fas fa-sync-alt"></i> รีเฟรช
-                    </button>
-                </div>
-                
-                <div class="flex-grow overflow-auto p-0 relative">
-                    <!-- History Loader -->
-                    <div id="historyLoader" class="absolute inset-0 bg-white/80 z-10 flex flex-col items-center justify-center hidden">
-                        <div class="loader mb-3"></div>
-                        <p class="text-gray-600 font-medium">กำลังโหลดข้อมูล...</p>
-                    </div>
-
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 shadow-sm z-0">
-                            <tr>
-                                <th scope="col" class="px-6 py-4 w-32 min-w-[120px]">วันที่เริ่มกิจกรรม</th>
-                                <th scope="col" class="px-6 py-4 min-w-[200px]">พาดหัวที่ AI เสนอ (5 รายการ)</th>
-                                <th scope="col" class="px-6 py-4 min-w-[250px]">เนื้อข่าว PR (ภาพ)</th>
-                                <th scope="col" class="px-6 py-4 min-w-[250px]">แคปชั่น FB</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTableBody" class="divide-y divide-gray-200">
-                            <!-- Injected via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+        </div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-400 py-4 text-center text-sm mt-auto">
-        <p>© 2026 โรงเรียนวัดแม่กะ สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเชียงใหม่ เขต 2 | พัฒนาด้วย Gemini AI</p>
+    <!-- Footer with visitor counter -->
+    <footer class="bg-gray-800 text-white mt-auto py-6">
+        <div class="max-w-5xl mx-auto px-4 flex flex-col items-center">
+            <p class="text-sm mb-3">© ระบบช่วยเขียนข่าวประชาสัมพันธ์ โรงเรียนวัดแม่กะ</p>
+            <!-- Visitor Counter -->
+            <div class="flex items-center gap-2 bg-gray-900 px-4 py-2 rounded-full border border-gray-700 shadow-inner">
+                <span class="text-xs text-gray-400">จำนวนผู้เข้าชม:</span>
+                <img src="https://api.visitorbadge.io/api/visitors?path=watmaeka-news-app&label=HITS&labelColor=%23FFC107&countColor=%23D32F2F&labelTextColor=%23000000" 
+                     alt="Visitor Counter" 
+                     onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                <span class="hidden text-xs text-brand-yellow">ถูกบล็อกโดย Adblock หรือเบราว์เซอร์</span>
+            </div>
+        </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- JavaScript Logic -->
     <script>
-        // API Configurations
-        let apiKey = localStorage.getItem('gemini_api_key') || ""; 
-        const scriptUrl = "https://script.google.com/macros/s/AKfycbz6KoB6qAybX7f6Hsl9NDZYSd-3oYS19D335-p5hDDYrCJynRPdr9tLKuJnR5XhCjxkQg/exec";
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3DaiAyz5V9Ra7jqKINGidGe9aVyZeLKGRwGUZI3OHcGZNMa43lkBx_N3LnTZUlaH4Jw/exec';
 
-        // Participants List
-        const participantsList = [
-            "นางสาวศิริยา อินทกาโมทย์ ผู้อำนวยการโรงเรียนวัดแม่กะ",
-            "นางสาวศิริยา อินทกาโมทย์ ผู้อำนวยการโรงเรียนวัดแม่กะ มอบหมายให้",
-            "นายจักรพงศ์ จันทวงศ์ รองผู้อำนวยการโรงเรียนวัดแม่กะ",
-            "นางสาวศศิประภา ชมถิ่น",
-            "นางณพิชญา นิติคุณชัย",
-            "นางสาวศิริณทิพย์ สุวรรณ์",
-            "นางสาวจันทวี ทาเกิด",
-            "นายณัฐพงษ์ วิริยา",
-            "นายธนะกานต์ ภูมิมาลา",
-            "นางสาวนฤมล กระจ่างโฉม",
-            "นางสาวเยาวพา มาน้อย",
-            "นายพิสิษฐ์  ตั้งสกุล",
-            "นายธนดล แดนคีรีราษฎ์",
-            "นายสุรชัย ปองพรศักดิ์",
-            "คณะครูโรงเรียนวัดแม่กะ",
-            "คณะครูและนักเรียนโรงเรียนวัดแม่กะ"
-        ];
-
-        // Initialization
-        document.addEventListener('DOMContentLoaded', () => {
-            renderParticipants();
-            
-            // Set API key input if exists
-            if (apiKey) {
-                document.getElementById('apiKeyInput').value = apiKey;
-            }
-            
-            // Handle form submission
-            document.getElementById('newsForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                await processNews();
-            });
-        });
-
-        // UI: Tab Switching
+        // Tab Switching Logic
         function switchTab(tabId) {
-            // Hide all
-            document.getElementById('tab-create').classList.add('hidden');
-            document.getElementById('tab-history').classList.add('hidden');
+            document.getElementById('content-write').classList.add('hidden');
+            document.getElementById('content-history').classList.add('hidden');
             
-            // Reset button styles
-            document.getElementById('btn-tab-create').classList.replace('tab-active', 'tab-inactive');
-            document.getElementById('btn-tab-history').classList.replace('tab-active', 'tab-inactive');
-            
-            // Show selected
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            document.getElementById(`btn-tab-${tabId}`).classList.replace('tab-inactive', 'tab-active');
+            document.getElementById('tab-write').className = 'tab-inactive px-6 py-3 text-lg transition-colors duration-200 hover:bg-gray-50 rounded-t-lg flex items-center gap-2';
+            document.getElementById('tab-history').className = 'tab-inactive px-6 py-3 text-lg transition-colors duration-200 hover:bg-gray-50 rounded-t-lg flex items-center gap-2';
 
-            // Load history if switched to history tab
-            if(tabId === 'history') {
-                fetchHistory();
-            }
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).className = 'tab-active px-6 py-3 text-lg transition-colors duration-200 hover:bg-gray-50 rounded-t-lg flex items-center gap-2';
         }
 
-        // UI: Render Checkboxes
-        function renderParticipants() {
-            const container = document.getElementById('participantsContainer');
-            let html = '';
-            participantsList.forEach((person, index) => {
-                html += `
-                    <label class="flex items-start gap-2 cursor-pointer group">
-                        <input type="checkbox" name="participant" value="${person}" class="mt-1 w-4 h-4 text-prRed rounded focus:ring-prRed pt-checkbox group-hover:ring-2">
-                        <span class="text-sm text-gray-700 leading-tight">${person}</span>
-                    </label>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        // UI: Toggle "Other" text input
-        function toggleOtherInput(checkboxId, inputId) {
-            const cb = document.getElementById(checkboxId);
-            const inp = document.getElementById(inputId);
-            inp.disabled = !cb.checked;
-            if (cb.checked) {
-                inp.focus();
-                inp.classList.remove('bg-gray-50');
-                inp.classList.add('bg-white');
+        // Toggle Input Field based on Checkbox
+        function toggleInput(checkboxId, inputId) {
+            const checkBox = document.getElementById(checkboxId);
+            const inputField = document.getElementById(inputId);
+            inputField.disabled = !checkBox.checked;
+            if (checkBox.checked) {
+                inputField.focus();
             } else {
-                inp.value = '';
-                inp.classList.add('bg-gray-50');
-                inp.classList.remove('bg-white');
+                inputField.value = '';
             }
         }
 
-        // API Key Management
-        function saveApiKey() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            if(key) {
-                localStorage.setItem('gemini_api_key', key);
-                apiKey = key;
-                Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, icon: 'success', title: 'บันทึก API Key สำเร็จ' });
-            } else {
-                localStorage.removeItem('gemini_api_key');
-                apiKey = "";
-                Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, icon: 'info', title: 'ลบ API Key ออกแล้ว' });
-            }
-        }
-
-        function toggleApiKeyVisibility() {
-            const input = document.getElementById('apiKeyInput');
-            const icon = document.getElementById('eyeIcon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        }
-
-        // Format Date for Display (Thai)
-        function formatThaiDate(dateStr) {
-            if(!dateStr) return '';
+        // Get Formatted Date
+        function formatDateTH(dateStr) {
+            if(!dateStr) return "-";
             const date = new Date(dateStr);
-            const months = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+            const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
             return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear() + 543}`;
         }
 
-        // Get Form Data
-        function getFormData() {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const activity = document.getElementById('activity').value;
-
-            // Gather Participants
-            let participants = Array.from(document.querySelectorAll('.pt-checkbox:checked')).map(cb => cb.value);
-            if (document.getElementById('pt_other_check').checked && document.getElementById('pt_other_text').value.trim() !== '') {
-                participants.push(document.getElementById('pt_other_text').value.trim());
-            }
-
-            // Gather Locations
-            let locations = Array.from(document.querySelectorAll('.loc-checkbox:checked')).map(cb => cb.value).filter(v => v !== 'อื่นๆ');
-            if (document.getElementById('loc_other_check').checked && document.getElementById('loc_other_text').value.trim() !== '') {
-                locations.push(document.getElementById('loc_other_text').value.trim());
-            }
-
-            return {
-                startDate,
-                endDate,
-                activity,
-                participants: participants.join(', '),
-                location: locations.join(', ')
-            };
-        }
-
-        // Main Process Logic
-        async function processNews() {
-            if (!apiKey) {
-                Swal.fire('แจ้งเตือน', 'กรุณาระบุและบันทึก Gemini API Key ก่อนประมวลผล', 'warning');
-                document.getElementById('apiKeyInput').focus();
-                return;
-            }
-
-            const data = getFormData();
+        // Process Form and Create Prompt
+        async function processForm() {
+            const btn = document.getElementById('btnProcess');
+            const statusMsg = document.getElementById('statusMessage');
             
-            if (!data.participants) {
-                Swal.fire('แจ้งเตือน', 'กรุณาเลือกผู้เข้าร่วมอย่างน้อย 1 รายการ', 'warning');
-                return;
-            }
-            if (!data.location) {
-                Swal.fire('แจ้งเตือน', 'กรุณาระบุสถานที่อย่างน้อย 1 รายการ', 'warning');
-                return;
-            }
-
-            // Show Loading
-            document.getElementById('btnProcess').disabled = true;
-            document.getElementById('loadingState').classList.remove('hidden');
-            document.getElementById('resultSection').classList.add('hidden');
+            btn.innerHTML = '<div class="loader mr-2 border-white border-t-brand-red"></div> กำลังประมวลผล...';
+            btn.disabled = true;
+            statusMsg.classList.add('hidden');
 
             try {
-                // 1. Call Gemini AI
-                const aiResult = await generateFromGemini(data);
-                
-                // 2. Render Results to UI
-                renderResults(aiResult);
+                // 1. Gather Data
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const actionText = document.getElementById('actionText').value;
 
-                // 3. Save to Google Sheets (Combine Form Data + AI Result)
-                await saveToGoogleSheets(data, aiResult);
+                // Gather Participants
+                let participants = [];
+                document.querySelectorAll('input[name="participant"]:checked').forEach(cb => participants.push(cb.value));
+                if(document.getElementById('checkOtherParticipant').checked && document.getElementById('otherParticipantText').value.trim() !== "") {
+                    participants.push(document.getElementById('otherParticipantText').value.trim());
+                }
 
-                document.getElementById('resultSection').classList.remove('hidden');
-                Swal.fire({
-                    title: 'สำเร็จ!',
-                    text: 'สร้างข่าวและบันทึกข้อมูลเรียบร้อยแล้ว',
-                    icon: 'success',
-                    confirmButtonColor: '#C8102E'
+                // Gather Locations
+                let locations = [];
+                document.querySelectorAll('input[name="location"]:checked').forEach(cb => locations.push(cb.value));
+                if(document.getElementById('checkOtherLocation').checked && document.getElementById('otherLocationText').value.trim() !== "") {
+                    locations.push(document.getElementById('otherLocationText').value.trim());
+                }
+
+                if (participants.length === 0) {
+                    alert('กรุณาเลือกผู้เข้าร่วมอย่างน้อย 1 รายการ');
+                    resetBtn();
+                    return;
+                }
+                if (locations.length === 0) {
+                    alert('กรุณาเลือกสถานที่อย่างน้อย 1 รายการ');
+                    resetBtn();
+                    return;
+                }
+
+                // 2. Generate Prompt Text
+                const promptText = `คุณคือผู้เชี่ยวชาญด้านสื่อสารมวลชนของโรงเรียนวัดแม่กะ โปรดช่วยเขียนข่าวประชาสัมพันธ์จากข้อมูลกิจกรรมดังต่อไปนี้:
+
+[ข้อมูลกิจกรรม]
+- วันที่เริ่ม: ${formatDateTH(startDate)}
+- วันที่สิ้นสุด: ${formatDateTH(endDate)}
+- ผู้เข้าร่วม: ${participants.join(", ")}
+- กิจกรรมที่ทำ: ${actionText}
+- สถานที่: ${locations.join(", ")}
+
+[คำสั่งในการสร้างผลลัพธ์]
+2.1 พาดหัวข่าว 5 หัวข้อ: ขอแบบสั้นๆ กระชับ น่าสนใจ เป็นทางการ น่าตื่นเต้นและดึงดูดผู้อ่าน
+2.2 เนื้อข่าวประชาสัมพันธ์สำหรับใส่ในภาพ: ความยาวประมาณ 6 บรรทัด เขียนให้น่าสนใจ เป็นทางการ และอ่านเข้าใจง่าย
+**คำสั่งบังคับ (สำคัญมาก):** ในส่วนของเนื้อข่าว ต้องระบุชื่อ นามสกุล และตำแหน่งเต็มของผู้เข้าร่วมทุกคนตามรายการที่ให้ไว้ "ห้ามตัดทอน ย่อ หรือลบชื่อใครออกเด็ดขาด"
+2.3 แฮชแท็ก (Hashtags): ขอแฮชแท็กที่เหมาะสมสำหรับลง Facebook จำนวนประมาณ 3 อัน`;
+
+                // Display Result Box
+                document.getElementById('generatedPrompt').value = promptText;
+                document.getElementById('resultBox').classList.remove('hidden');
+
+                // 3. Save to Google Sheets
+                const payload = {
+                    startDate: startDate,
+                    endDate: endDate,
+                    participants: participants.join(", "),
+                    action: actionText,
+                    location: locations.join(", "),
+                    prompt: promptText
+                };
+
+                // Use fetch to POST data (text/plain to avoid CORS preflight issues with GAS)
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
 
-                // Scroll to results
-                document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+                const result = await response.json();
+                
+                if(result.status === 'success') {
+                    statusMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> ประมวลผลและบันทึกข้อมูลเรียบร้อยแล้ว!';
+                    statusMsg.className = 'mt-4 text-center font-bold text-green-600 block';
+                } else {
+                    throw new Error(result.message || 'Unknown error');
+                }
 
             } catch (error) {
                 console.error("Error:", error);
-                if (error.message.includes('401') || error.message.includes('403')) {
-                    Swal.fire('การเชื่อมต่อหมดอายุ', 'เซสชันการเชื่อมต่อกับ AI ขาดหาย กรุณารีเฟรชหน้าเว็บ (F5) แล้วลองใหม่อีกครั้งครับ', 'warning');
-                } else {
-                    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถประมวลผลด้วย AI ได้: ' + error.message, 'error');
-                }
+                statusMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> เกิดข้อผิดพลาดในการบันทึกข้อมูล: ${error.message}<br><span class="text-sm font-normal">(กรุณาตรวจสอบว่าได้ตั้งค่า Google Apps Script เรียบร้อยแล้ว)</span>`;
+                statusMsg.className = 'mt-4 text-center font-bold text-red-600 block';
             } finally {
-                document.getElementById('btnProcess').disabled = false;
-                document.getElementById('loadingState').classList.add('hidden');
+                resetBtn();
             }
         }
 
-        // --- GEMINI API INTEGRATION ---
-        async function generateFromGemini(formData) {
-            // Prepare prompt instruction
-            const dateStr = formData.startDate === formData.endDate 
-                ? formatThaiDate(formData.startDate) 
-                : `${formatThaiDate(formData.startDate)} ถึง ${formatThaiDate(formData.endDate)}`;
-
-            const systemPrompt = `คุณคือผู้เชี่ยวชาญด้านสื่อสารมวลชนและประชาสัมพันธ์ของ "โรงเรียนวัดแม่กะ"`;
-            const userQuery = `
-จงนำข้อมูลกิจกรรมต่อไปนี้ไปเขียนข่าวประชาสัมพันธ์:
-
-- วันที่: ${dateStr}
-- ผู้เข้าร่วม (นำไปใช้ให้ครบทุกคน): ${formData.participants}
-- สถานที่: ${formData.location}
-- รายละเอียดกิจกรรม (ทำอะไร): ${formData.activity}
-
-กรุณาวิเคราะห์และสร้างเนื้อหา 3 ส่วนดังนี้:
-1. พาดหัวข่าว 5 หัวข้อ: สั้นๆ กระชับ น่าสนใจ เป็นทางการ น่าตื่นเต้นและดึงดูด
-2. เนื้อข่าวประชาสัมพันธ์สำหรับใส่ในภาพ: ความยาวประมาณ 5 บรรทัด น่าสนใจ เป็นทางการ อ่านแล้วเข้าใจง่าย 
-   **คำสั่งบังคับ:** ต้องระบุชื่อ นามสกุล และตำแหน่งเต็มของผู้เข้าร่วมทุกคนตามรายการที่ให้ไว้ "ห้ามตัดทอน ย่อ หรือลบชื่อใครออกเด็ดขาด"
-3. เนื้อข่าวสำหรับลง Facebook: ความยาว 3 บรรทัด มีความเป็นทางการ น่าสนใจ มีใส่อีโมจิ ไม่ต้องมีคำว่าครับ/ค่ะ และตามท้ายด้วยแฮชแท็คที่เหมาะสม 
-   **คำสั่งบังคับ:** ต้องระบุชื่อ นามสกุล และตำแหน่งเต็มของผู้เข้าร่วมทุกคนตามรายการที่ให้ไว้ "ห้ามตัดทอน ย่อ หรือลบชื่อใครออกเด็ดขาด"
-`;
-
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-            
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            headlines: {
-                                type: "ARRAY",
-                                items: { type: "STRING" }
-                            },
-                            prText: { type: "STRING" },
-                            fbText: { type: "STRING" }
-                        },
-                        required: ["headlines", "prText", "fbText"]
-                    }
-                }
-            };
-
-            // Retry logic with exponential backoff
-            const maxRetries = 5;
-            const delays = [1000, 2000, 4000, 8000, 16000];
-
-            for (let i = 0; i <= maxRetries; i++) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errText = await response.text();
-                        throw new Error(`HTTP ${response.status}: ${errText}`);
-                    }
-
-                    const result = await response.json();
-                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                    
-                    if (!text) throw new Error('No text returned from Gemini');
-
-                    return JSON.parse(text); // Parse the guaranteed JSON
-
-                } catch (error) {
-                    if (i === maxRetries) throw error;
-                    await new Promise(res => setTimeout(res, delays[i]));
-                }
-            }
+        function resetBtn() {
+            const btn = document.getElementById('btnProcess');
+            btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> 6. ประมวลผลและสร้าง Prompt';
+            btn.disabled = false;
         }
 
-        // Render AI Results to HTML
-        function renderResults(aiResult) {
-            // Headlines
-            const hlContainer = document.getElementById('resHeadlines');
-            hlContainer.innerHTML = '';
-            aiResult.headlines.forEach((hl, idx) => {
-                const li = document.createElement('li');
-                li.className = "flex justify-between items-center bg-gray-50 p-3 rounded border border-gray-100";
-                li.innerHTML = `
-                    <span class="text-gray-800 font-medium">${idx + 1}. <span id="hl-${idx}">${hl}</span></span>
-                    <button onclick="copyText('hl-${idx}')" class="text-xs bg-white border border-gray-300 hover:bg-gray-100 text-gray-600 px-2 py-1 rounded transition-colors ml-4 shrink-0">
-                        <i class="far fa-copy"></i>
-                    </button>
-                `;
-                hlContainer.appendChild(li);
-            });
-
-            // PR Text
-            document.getElementById('resPrText').innerText = aiResult.prText;
-            
-            // FB Text
-            document.getElementById('resFbText').innerText = aiResult.fbText;
-        }
-
-        // --- GOOGLE APPS SCRIPT INTEGRATION (SAVE) ---
-        async function saveToGoogleSheets(formData, aiResult) {
-            // Structure data matching the columns requested
-            const payload = {
-                action: 'save',
-                data: {
-                    startDate: formData.startDate,
-                    endDate: formData.endDate,
-                    participants: formData.participants,
-                    activity: formData.activity,
-                    location: formData.location,
-                    headline_1: aiResult.headlines[0] || "",
-                    headline_2: aiResult.headlines[1] || "",
-                    headline_3: aiResult.headlines[2] || "",
-                    headline_4: aiResult.headlines[3] || "",
-                    headline_5: aiResult.headlines[4] || "",
-                    prText: aiResult.prText,
-                    fbText: aiResult.fbText
-                }
-            };
-
-            // Using text/plain to avoid CORS preflight options block in simple Web Apps
-            await fetch(scriptUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8',
-                },
-                body: JSON.stringify(payload)
-            });
-            // Note: with text/plain to GAS, we often get a CORS warning on the response read, 
-            // but the POST actually succeeds. Since we await it, if it doesn't throw a network error, it's generally fine.
-        }
-
-        // --- GOOGLE APPS SCRIPT INTEGRATION (READ HISTORY) ---
-        async function fetchHistory() {
-            const loader = document.getElementById('historyLoader');
-            const tbody = document.getElementById('historyTableBody');
-            
-            loader.classList.remove('hidden');
+        // Copy to Clipboard
+        function copyPrompt() {
+            const copyText = document.getElementById("generatedPrompt");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
             
             try {
-                const response = await fetch(`${scriptUrl}?action=read`);
-                const result = await response.json();
-                
-                tbody.innerHTML = '';
+                // Try modern clipboard API first
+                navigator.clipboard.writeText(copyText.value).then(() => {
+                    alert("คัดลอกข้อความสำเร็จ! สามารถนำไปวางใน Gemini ได้เลย");
+                }).catch(err => {
+                    // Fallback for older browsers or iframes
+                    document.execCommand('copy');
+                    alert("คัดลอกข้อความสำเร็จ! สามารถนำไปวางใน Gemini ได้เลย");
+                });
+            } catch(e) {
+                document.execCommand('copy');
+                alert("คัดลอกข้อความสำเร็จ! สามารถนำไปวางใน Gemini ได้เลย");
+            }
+        }
 
-                if (result.status === 'success' && result.data.length > 0) {
-                    // Sort descending by Timestamp (Index 0 in GAS usually, or handle in GAS)
-                    // Assuming GAS returns an array of objects
+        // Clear Form
+        function clearForm() {
+            document.getElementById('newsForm').reset();
+            document.getElementById('otherParticipantText').disabled = true;
+            document.getElementById('otherLocationText').disabled = true;
+            document.getElementById('resultBox').classList.add('hidden');
+            document.getElementById('statusMessage').classList.add('hidden');
+        }
+
+        // Load History Data from GAS
+        async function loadHistory() {
+            const tbody = document.getElementById('historyTableBody');
+            const loader = document.getElementById('historyLoader');
+            
+            tbody.innerHTML = '';
+            loader.classList.remove('hidden');
+
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const result = await response.json();
+
+                loader.classList.add('hidden');
+
+                if (result.status === 'success' && result.data && result.data.length > 0) {
                     result.data.forEach(row => {
-                        // row format mapping from sheet: 
-                        // timestamp, startDate, endDate, participants, activity, location, h1, h2, h3, h4, h5, pr, fb
-                        
-                        // Create combined headlines list
-                        const headlinesList = [row.Headline1, row.Headline2, row.Headline3, row.Headline4, row.Headline5]
-                            .filter(h => h)
-                            .map((h, i) => `<div class="mb-2 leading-relaxed">- ${h}</div>`)
-                            .join('');
+                        // Format the timestamp
+                        const dateObj = new Date(row.timestamp);
+                        const formattedTime = dateObj.toLocaleString('th-TH', { 
+                            year: 'numeric', month: 'short', day: 'numeric',
+                            hour: '2-digit', minute: '2-digit'
+                        });
 
                         const tr = document.createElement('tr');
                         tr.className = "hover:bg-gray-50 transition-colors";
                         
-                        // ดึงข้อมูลวันที่เริ่มกิจกรรมมาแสดงผล
-                        const dateObj = new Date(row.StartDate);
-                        const displayDate = isNaN(dateObj) ? (row.StartDate || 'ไม่มีข้อมูล') : formatThaiDate(row.StartDate);
+                        // Shorten prompt for display
+                        const shortPrompt = row.prompt.length > 150 ? row.prompt.substring(0, 150) + '...' : row.prompt;
 
                         tr.innerHTML = `
-                            <td class="px-6 py-4 whitespace-nowrap align-top">
-                                <div class="font-medium text-gray-900">${displayDate}</div>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium align-top">
+                                <i class="fa-regular fa-clock text-gray-400 mr-1"></i> ${formattedTime}
                             </td>
-                            <td class="px-6 py-4 align-top">
-                                ${headlinesList}
-                            </td>
-                            <td class="px-6 py-4 align-top">
-                                <div class="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed">${row.PRText || ''}</div>
-                            </td>
-                            <td class="px-6 py-4 align-top">
-                                <div class="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed">${row.FBCaption || ''}</div>
+                            <td class="px-6 py-4 text-sm text-gray-800">
+                                <div class="bg-gray-50 p-3 rounded border border-gray-200 text-xs whitespace-pre-line">${shortPrompt}</div>
+                                <button onclick="copyOldPrompt(this)" data-fullprompt="${encodeURIComponent(row.prompt)}" class="mt-2 text-brand-red hover:text-red-800 font-medium text-xs flex items-center gap-1">
+                                    <i class="fa-regular fa-copy"></i> คัดลอก Prompt นี้
+                                </button>
                             </td>
                         `;
                         tbody.appendChild(tr);
                     });
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">ไม่มีประวัติการสร้างข่าว</td></tr>`;
+                    tbody.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-gray-500">ยังไม่มีข้อมูลประวัติการเขียนข่าว</td></tr>';
                 }
             } catch (error) {
-                console.error('Fetch history error:', error);
-                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-red-500">ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง</td></tr>`;
-            } finally {
+                console.error("Error loading history:", error);
                 loader.classList.add('hidden');
+                tbody.innerHTML = `<tr><td colspan="2" class="px-6 py-8 text-center text-red-500"><i class="fa-solid fa-triangle-exclamation"></i> ไม่สามารถดึงข้อมูลได้ กรุณาตรวจสอบการตั้งค่า Google Apps Script</td></tr>`;
             }
         }
 
-        // --- UTILS ---
-        function clearForm() {
-            document.getElementById('newsForm').reset();
-            toggleOtherInput('pt_other_check', 'pt_other_text');
-            toggleOtherInput('loc_other_check', 'loc_other_text');
-            document.getElementById('resultSection').classList.add('hidden');
-        }
-
-        function copyText(elementId) {
-            const textToCopy = document.getElementById(elementId).innerText;
+        // Helper to copy from history
+        function copyOldPrompt(btnElement) {
+            const textToCopy = decodeURIComponent(btnElement.getAttribute('data-fullprompt'));
             
-            // Try modern clipboard API first
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    showToast();
-                }).catch(err => {
-                    fallbackCopy(textToCopy);
-                });
-            } else {
-                fallbackCopy(textToCopy);
-            }
-        }
-
-        function fallbackCopy(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";  // Avoid scrolling to bottom
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+            // Create a temporary textarea
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = textToCopy;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
             try {
                 document.execCommand('copy');
-                showToast();
+                alert("คัดลอก Prompt เก่าเรียบร้อยแล้ว!");
             } catch (err) {
-                console.error('Fallback copy failed', err);
+                console.error('Oops, unable to copy', err);
             }
-            document.body.removeChild(textArea);
+            
+            document.body.removeChild(tempTextArea);
         }
-
-        function showToast() {
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 1500,
-                icon: 'success',
-                title: 'คัดลอกข้อความแล้ว'
-            });
-        }
+        
+        // Set default dates on load
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').value = today;
+            document.getElementById('endDate').value = today;
+        };
     </script>
 </body>
 </html>
