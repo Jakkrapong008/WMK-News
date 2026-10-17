@@ -420,7 +420,7 @@
                         </div>
 
                         <div class="pt-4 flex flex-wrap items-center justify-between gap-3">
-                            <a href="https://docs.google.com/spreadsheets/d/1uFqDTrEjtKIxou29W-8AB8gJt5d52c-5GYgFgBEgD2Q/edit" target="_blank" class="text-xs sm:text-sm text-blue-600 hover:underline flex items-center gap-1 font-semibold">
+                            <a href="https://docs.google.com/spreadsheets/d/1FzQtPOfugbinQ-jvGQ_SPgT54QeIwLkRdIl0On74kCY/edit" target="_blank" class="text-xs sm:text-sm text-blue-600 hover:underline flex items-center gap-1 font-semibold">
                                 <i class="fas fa-external-link-alt"></i> เปิดดู Google Spreadsheet
                             </a>
 
@@ -908,7 +908,7 @@
                     throw new Error(data.message || 'บันทึกไม่สำเร็จ');
                 }
             } catch (err) {
-                Swal.fire('ข้อผิดพลาด', err.message || 'เกิดข้อผิดพลาดในการบันทึก', 'error');
+                handleFetchError(err, 'บันทึกการตั้งค่า');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-save"></i> บันทึกการตั้งค่าลงชีท`;
@@ -952,12 +952,7 @@
                     throw new Error(data.message || 'เชื่อมต่อไม่สำเร็จ');
                 }
             } catch (err) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'ทดสอบไม่สำเร็จ',
-                    text: err.message || 'โปรดตรวจสอบว่า API Key ถูกต้องและมียอดโควต้าคงเหลือ',
-                    confirmButtonColor: '#C8102E'
-                });
+                handleFetchError(err, 'ทดสอบการเชื่อมต่อ Typhoon');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-plug text-prRed"></i> ทดสอบการเชื่อมต่อ API`;
@@ -983,29 +978,66 @@
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> กำลังดำเนินการ...`;
 
             try {
-                const payload = {
-                    action: 'initSheets',
-                    password: ADMIN_PWD
-                };
+                let success = false;
+                let data = null;
 
-                const res = await fetch(scriptUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
+                try {
+                    const res = await fetch(scriptUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'initSheets', password: ADMIN_PWD })
+                    });
+                    data = await res.json();
+                    if (data && data.status === 'success') success = true;
+                } catch (postErr) {
+                    console.warn("POST failed, trying GET fallback...", postErr);
+                    const resGet = await fetch(`${scriptUrl}?action=initSheets&password=${encodeURIComponent(ADMIN_PWD)}`);
+                    data = await resGet.json();
+                    if (data && data.status === 'success') success = true;
+                }
 
-                if (data.status === 'success') {
+                if (success) {
                     Swal.fire('สำเร็จ', data.message || 'จัดเตรียมแท็บชีท data และ config สำเร็จแล้ว', 'success');
                     loadAdminConfig();
                 } else {
-                    throw new Error(data.message || 'ดำเนินการไม่สำเร็จ');
+                    throw new Error(data && data.message ? data.message : 'ดำเนินการไม่สำเร็จ');
                 }
             } catch (err) {
-                Swal.fire('ข้อผิดพลาด', err.message || 'เกิดข้อผิดพลาดในการเตรียมชีท', 'error');
+                handleFetchError(err, 'สร้างชีทอัตโนมัติ');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-tools"></i> สร้าง / เตรียมแท็บชีทอัตโนมัติ`;
+            }
+        }
+
+        function handleFetchError(err, actionName) {
+            console.error(actionName, err);
+            const errStr = (err && err.message) ? err.message : String(err);
+            if (errStr.includes('Failed to fetch') || errStr.includes('NetworkError') || errStr.includes('Load failed')) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ยังไม่ได้อัปเดต Google Apps Script',
+                    html: `
+                        <div class="text-left text-sm space-y-3">
+                            <div class="p-3 bg-red-50 text-red-700 rounded-lg border border-red-200">
+                                <b>เกิดข้อผิดพลาด: Failed to fetch</b><br>
+                                สาเหตุหลัก: โค้ดใน <b>Google Apps Script</b> ยังเป็นเวอร์ชันเดิม จึงยังไม่รู้จักคำสั่ง <code>initSheets</code> หรือการบันทึก API Key ครับ
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-xs text-gray-700 space-y-1">
+                                <p class="font-bold text-gray-900 text-sm mb-1">📌 วิธีแก้ไข (ใช้เวลา 1 นาที):</p>
+                                <div>1. เปิดโปรเจกต์ <b>Google Apps Script</b></div>
+                                <div>2. นำโค้ดจากไฟล์ <b>code.gs</b> ในโฟลเดอร์นี้ไปวางทับ แล้วกด <b>บันทึก (💾)</b></div>
+                                <div>3. กดปุ่มสีน้ำเงิน <b>การทำให้ใช้งานได้ (Deploy)</b> มุมบนขวา &gt; เลือก <b>จัดการการทำให้ใช้งานได้ (Manage deployments)</b></div>
+                                <div>4. กดไอคอน <b>ดินสอ (แก้ไข)</b> &gt; เลือกเวอร์ชัน: <b>เวอร์ชันใหม่ (New version)</b> &gt; กด <b>ทำให้ใช้งานได้ (Deploy)</b></div>
+                            </div>
+                            <p class="text-xs text-blue-600 font-semibold">* หรือในหน้า Apps Script ให้เลือกฟังก์ชัน <b>initSheets</b> แล้วกดปุ่ม <b>"เรียกใช้ (Run)"</b> เพื่อสร้างชีทได้ทันทีครับ</p>
+                        </div>
+                    `,
+                    confirmButtonText: 'เข้าใจแล้ว',
+                    confirmButtonColor: '#C8102E'
+                });
+            } else {
+                Swal.fire('ข้อผิดพลาด', errStr, 'error');
             }
         }
 
