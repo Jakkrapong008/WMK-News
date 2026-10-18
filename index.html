@@ -367,15 +367,20 @@
                             </p>
                         </div>
 
-                        <!-- Model Selection -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                รุ่นโมเดล AI (Typhoon Model)
-                            </label>
-                            <select id="adminModel" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-prRed outline-none text-sm transition-colors bg-white">
-                                <option value="typhoon-v2.5-30b-a3b-instruct" selected>typhoon-v2.5-30b-a3b-instruct (แนะนำ - โมเดลล่าสุด ฉลาดและเป็นธรรมชาติที่สุด)</option>
-                                <option value="typhoon-v2.1-12b-instruct">typhoon-v2.1-12b-instruct (โมเดลขนาดกลาง รวดเร็ว)</option>
-                            </select>
+                        <!-- Auto Model Detection Info -->
+                        <div class="p-4 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-3">
+                            <i class="fas fa-robot text-prRed text-xl mt-0.5"></i>
+                            <div class="flex-grow">
+                                <div class="text-sm font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                                    <span>รุ่นโมเดล AI:</span>
+                                    <span id="detectedModelBadge" class="bg-white text-prDarkRed px-2.5 py-0.5 rounded-full text-xs font-mono font-bold border border-amber-300 shadow-sm">
+                                        กำลังตรวจจับอัตโนมัติ...
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-1">
+                                    * ระบบจะตรวจสอบและเลือกรุ่นโมเดลที่ดีที่สุดจาก API ให้อัตโนมัติ โดยที่คุณไม่ต้องตั้งค่ารุ่นโมเดลเอง
+                                </p>
+                            </div>
                         </div>
 
                         <!-- Action Buttons -->
@@ -829,7 +834,7 @@
             const statusTitle = document.getElementById('apiKeyStatusTitle');
             const statusDesc = document.getElementById('apiKeyStatusDesc');
             const apiKeyInput = document.getElementById('adminApiKey');
-            const modelSelect = document.getElementById('adminModel');
+            const modelBadge = document.getElementById('detectedModelBadge');
 
             statusTitle.innerText = "กำลังตรวจสอบการตั้งค่าจากชีท...";
             statusDesc.innerText = "เชื่อมต่อไปยัง Apps Script...";
@@ -854,8 +859,8 @@
                         statusBox.className = "p-4 rounded-xl border flex items-center justify-between gap-3 bg-amber-50 border-amber-200";
                     }
 
-                    if (res.model) {
-                        modelSelect.value = res.model;
+                    if (modelBadge) {
+                        modelBadge.innerText = (res.model || 'typhoon-v2.5-30b-a3b-instruct') + " (อัตโนมัติ)";
                     }
                 } else {
                     throw new Error(res.message || 'ไม่สามารถโหลดการตั้งค่าได้');
@@ -871,21 +876,19 @@
 
         async function saveAdminConfig() {
             const apiKeyInput = document.getElementById('adminApiKey');
-            const modelSelect = document.getElementById('adminModel');
+            const modelBadge = document.getElementById('detectedModelBadge');
             const btn = document.getElementById('btnSaveConfig');
 
             const keyVal = apiKeyInput.value.trim();
-            const modelVal = modelSelect.value;
 
             btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...`;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> กำลังบันทึกและตรวจจับโมเดล...`;
 
             try {
                 const payload = {
                     action: 'saveConfig',
                     password: ADMIN_PWD,
-                    apiKey: keyVal,
-                    model: modelVal
+                    apiKey: keyVal
                 };
 
                 const res = await fetch(scriptUrl, {
@@ -896,10 +899,13 @@
                 const data = await res.json();
 
                 if (data.status === 'success') {
+                    if (modelBadge && data.model) {
+                        modelBadge.innerText = data.model + " (อัตโนมัติ)";
+                    }
                     Swal.fire({
                         icon: 'success',
-                        title: 'สำเร็จ',
-                        text: 'บันทึกการตั้งค่าลงชีท config เรียบร้อยแล้ว',
+                        title: 'บันทึกสำเร็จ!',
+                        text: data.message || 'บันทึกการตั้งค่าลงชีทเรียบร้อยแล้ว',
                         confirmButtonColor: '#C8102E'
                     });
                     loadAdminConfig();
@@ -917,17 +923,16 @@
         async function testAdminTyphoon() {
             const btn = document.getElementById('btnTestTyphoon');
             const apiKeyInput = document.getElementById('adminApiKey');
-            const modelSelect = document.getElementById('adminModel');
+            const modelBadge = document.getElementById('detectedModelBadge');
 
             btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> กำลังทดสอบ...`;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> กำลังทดสอบเชื่อมต่อ...`;
 
             try {
                 const payload = {
                     action: 'testTyphoon',
                     password: ADMIN_PWD,
-                    apiKey: apiKeyInput.value.trim(),
-                    model: modelSelect.value
+                    apiKey: apiKeyInput.value.trim()
                 };
 
                 const res = await fetch(scriptUrl, {
@@ -938,10 +943,15 @@
                 const data = await res.json();
 
                 if (data.status === 'success') {
+                    if (modelBadge && data.model) {
+                        modelBadge.innerText = data.model + " (อัตโนมัติ)";
+                    }
                     Swal.fire({
                         icon: 'success',
                         title: 'เชื่อมต่อสำเร็จ!',
                         html: `<div class="text-left text-sm mt-2 p-3 bg-gray-50 rounded border">
+                                <div class="font-bold text-gray-700">โมเดลที่ตรวจพบอัตโนมัติ:</div>
+                                <div class="text-prDarkRed font-mono font-bold text-xs mb-2">${data.model || 'typhoon-v2.5-30b-a3b-instruct'}</div>
                                 <div class="font-bold text-gray-700">คำตอบทดสอบจาก AI:</div>
                                 <div class="text-gray-600 mt-1">${data.reply}</div>
                                </div>`,
